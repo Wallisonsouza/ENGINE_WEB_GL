@@ -5,67 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     EngineInputs.initialize();
 });
 
-class EngineInputs 
-{
-    static downEvent;
-    static upEvent;
-    static pressEvent;
 
-    static initialize() 
-    {
-        document.addEventListener("keydown", function (event) 
-        {
-            EngineInputs.downEvent = event;
-
-        });
-
-        document.addEventListener("keyup", function (event) 
-        {
-            EngineInputs.upEvent = event;
-            EngineInputs.downEvent = null;
-
-        });
-
-        document.addEventListener("keypress", function (event) 
-        {
-            EngineInputs.pressEvent = event;
-
-        });
-    }
-
-    static GetKeyDown(key) 
-    {
-        if (EngineInputs.downEvent) 
-        {
-            return EngineInputs.downEvent.key === key;
-        }
-
-        return false;
-    }
-
-    static GetKeyUp(key)
-    {
-        if(EngineInputs.upEvent)
-        {
-            return EngineInputs.upEvent.key === key;
-        }
-    }
-
-    static GetKey(key)
-    {
-        if(EngineInputs.pressEvent)
-        {
-            return EngineInputs.pressEvent.key === key;
-        }
-    }
-}
-
-class EngineCamera
-{
-    static near = 0.1;
-    static far = 1000;
-    static size = 10;
-}
 
 class Engine_WEB_GL 
 {
@@ -103,7 +43,7 @@ class Engine_WEB_GL
 
           
             var rotation = EngineQuaternion.EulerToQuaternion(cout, cout, 0);
-            var scale = new EngineVector3(0.1, 0.5, 0.5);
+            var scale = new EngineVector3(0.5, 0.5, 0.5);
             cout = cout + 0.3;
 
             const WebGL = Engine_WEB_GL_AUX.RENDERING_GET_WEB_GL_CONTEXT("renderArea");
@@ -135,16 +75,16 @@ class Engine_WEB_GL
             WebGL.vertexAttribPointer(a_matrix_vextex_position, 3, WebGL.FLOAT, WebGL.FALSE, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
             WebGL.enableVertexAttribArray(a_matrix_vextex_position);
 
-            var aspecRatio = window.innerWidth /  window.innerHeight;
-            var camSizeRight = EngineCamera.size * aspecRatio / 2.0;
-            var camSizeLeft = -camSizeRight;
-            var camSizeTop = EngineCamera.size / 2;
-            var camSizeBottom = -camSizeTop;
+           // var aspecRatio = window.innerWidth /  window.innerHeight;
+            //var camSizeRight = EngineCamera.size * aspecRatio / 2.0;
+           // var camSizeLeft = -camSizeRight;
+          //  var camSizeTop = EngineCamera.size / 2;
+           // var camSizeBottom = -camSizeTop;
 
             // cria uma matriz de projecao;
-            var projectionMatrix = EngineMatrix4x4.Cam_Orthographic(camSizeLeft, camSizeRight, camSizeTop, camSizeBottom, EngineCamera.near, EngineCamera.far);
-            const u_matrix_projection = WebGL.getUniformLocation(program, "u_projection");
-            WebGL.uniformMatrix4fv(u_matrix_projection, false, EngineMatrix4x4.ToArray32(projectionMatrix));
+            //var projectionMatrix = EngineMatrix4x4.Cam_Orthographic(camSizeLeft, camSizeRight, camSizeTop, camSizeBottom, EngineCamera.near, EngineCamera.far);
+            //const u_matrix_projection = WebGL.getUniformLocation(program, "u_projection");
+            //WebGL.uniformMatrix4fv(u_matrix_projection, false, EngineMatrix4x4.ToArray32(projectionMatrix));
 
             //cria uma matriz de posicao;
             const translationMatrix = EngineMatrix4x4.Matrix_Translation(position);

@@ -21,10 +21,11 @@ class EngineGizmos
         varying vec4 v_color;
         uniform mat4 u_translation;
         uniform mat4 u_rotation;
+        uniform mat4 u_scale;
   
         void main() 
         {
-            gl_Position = u_rotation * a_vertexPosition * u_translation;
+            gl_Position = u_rotation * u_scale * a_vertexPosition * u_translation;
             v_color = a_color;
         }
       `;
@@ -106,6 +107,11 @@ class EngineGizmos
         var rotationMatrix = EngineMatrix4x4.Matrix_Rotation(this.transform.rotation);
         var u_matrix_rotation = WebGL.getUniformLocation(program, "u_rotation");
         WebGL.uniformMatrix4fv(u_matrix_rotation, false, EngineMatrix4x4.ToArray32(rotationMatrix));
+
+         // Cria uma matriz de escala
+         var scaleMatrix = EngineMatrix4x4.Matrix_Scale(this.transform.scale);
+         var u_matrix_scale = WebGL.getUniformLocation(program, "u_scale");
+         WebGL.uniformMatrix4fv(u_matrix_scale, false, EngineMatrix4x4.ToArray32(scaleMatrix));
     
         // Crie um único buffer para armazenar as cores
         const colorBuffer = WebGL.createBuffer();
