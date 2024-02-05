@@ -20,8 +20,10 @@
     <script src="Engine_Quaternion.js"></script>
     <script src="Engine_Gizmos.js"></script>
     <script src="Engine_Inputs.js"></script>
+    <script src="Engine_Camera.js"></script>
     <script src="Engine.js"></script>
-    <script src="Game_Main.js"></script>
+    <script src="Editor_Window.js"></script>
+    <script src="Editor_Camera.js"></script>
 
 
 
@@ -67,18 +69,31 @@
         margin: 0;
     }
 
-    #renderArea{
+    #editor_render_area
+    {
+
+        width: 50%;
         height: 100%;
-        width: 100%;
-      
         background-color: aqua;
+    }
+
+    #game_render_area
+    {   
+        width: 50%;
+        height: 100%;
+        background-color: rgb(32, 0, 0);
     }
 </style>
 <body>
 
-    <canvas id="renderArea">
+    <canvas id="editor_render_area">
         
     </canvas>
+
+    <canvas id="game_render_area">
+        
+    </canvas>
+
 
 </body>
 </html>

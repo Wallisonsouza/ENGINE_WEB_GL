@@ -1,4 +1,12 @@
 class Engine
 {
+    Start()
+    {
 
+    }
+
+    UpdateTime()
+    {
+
+    }
 }

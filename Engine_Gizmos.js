@@ -1,9 +1,10 @@
 class EngineGizmos
 {
-    transform;
-    static colorX = new EngineVector4(1.0, 0.0, 0.0, 1.0);
-    static colorY = new EngineVector4(0.0, 1.0, 0.0, 1.0);
-    static colorZ = new EngineVector4(0.0, 0.0, 1.0, 1.0);
+  transform;
+  
+  static colorX = new EngineVector4(1.0, 0.0, 0.0, 1.0);
+  static colorY = new EngineVector4(0.0, 1.0, 0.0, 1.0);
+  static colorZ = new EngineVector4(0.0, 0.0, 1.0, 1.0);
 
     constructor() 
     {
@@ -108,10 +109,10 @@ class EngineGizmos
         var u_matrix_rotation = WebGL.getUniformLocation(program, "u_rotation");
         WebGL.uniformMatrix4fv(u_matrix_rotation, false, EngineMatrix4x4.ToArray32(rotationMatrix));
 
-         // Cria uma matriz de escala
-         var scaleMatrix = EngineMatrix4x4.Matrix_Scale(this.transform.scale);
-         var u_matrix_scale = WebGL.getUniformLocation(program, "u_scale");
-         WebGL.uniformMatrix4fv(u_matrix_scale, false, EngineMatrix4x4.ToArray32(scaleMatrix));
+        // Cria uma matriz de escala
+        var scaleMatrix = EngineMatrix4x4.Matrix_Scale(this.transform.scale);
+        var u_matrix_scale = WebGL.getUniformLocation(program, "u_scale");
+        WebGL.uniformMatrix4fv(u_matrix_scale, false, EngineMatrix4x4.ToArray32(scaleMatrix));
     
         // Crie um único buffer para armazenar as cores
         const colorBuffer = WebGL.createBuffer();

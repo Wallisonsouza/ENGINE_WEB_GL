@@ -35,6 +35,21 @@ class Engine_WEB_GL
         {
             position.y = position.y - speed;
         }
+
+
+        var object = new EngineObject();
+        object.AddComponent(EngineCamera);
+        object.AddComponent(EngineCamera);
+        console.log(object);
+
+
+
+
+
+
+
+
+
      
         function renderLoop() 
         {
@@ -42,11 +57,11 @@ class Engine_WEB_GL
             var position = new EngineVector3(0.2, 0, 0);
 
           
-            var rotation = EngineQuaternion.EulerToQuaternion(cout, cout, 0);
+            var rotation = EngineQuaternion.EulerToQuaternion(25, cout, 0);
             var scale = new EngineVector3(0.5, 0.5, 0.5);
             cout = cout + 0.3;
 
-            const WebGL = Engine_WEB_GL_AUX.RENDERING_GET_WEB_GL_CONTEXT("renderArea");
+            const WebGL = Engine_WEB_GL_AUX.RENDERING_GET_WEB_GL_CONTEXT("editor_render_area");
             const vertexShaderSource = Engine_WEB_GL_AUX.SHADER_VERTEX_SOURCE();
             const fragmentShaderSource = Engine_WEB_GL_AUX.SHADER_FRAGMENT_SOURCE();
             const vertexShader = Engine_WEB_GL_AUX.SHADER_CREATE_VERTEX_SHADER(WebGL, vertexShaderSource);
