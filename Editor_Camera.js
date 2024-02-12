@@ -1,7 +1,7 @@
 class EditorCamera
 {
-    static fov = 60.0;
-    static near = 0.03;
-    static far = 10000;
-    static speed = 1.0;
+    fov = 60.0;
+    near = 0.03;
+    far = 10000;
+    speed = 1.0;
 }   

@@ -17,9 +17,9 @@ class EngineQuaternion
 
     static EulerToQuaternion(roll, pitch, yaw) 
     {
-        const pitchRad = EngineMatFloat.dregreesToRadians(pitch) / 2; 
-        const yawRad = EngineMatFloat.dregreesToRadians(yaw) / 2; 
-        const rollRad = EngineMatFloat.dregreesToRadians(roll) / 2; 
+        const pitchRad = EngineMatFloat.DregreesToRadians(pitch) / 2; 
+        const yawRad = EngineMatFloat.DregreesToRadians(yaw) / 2; 
+        const rollRad = EngineMatFloat.DregreesToRadians(roll) / 2; 
     
         const sinPitch = Math.sin(pitchRad);
         const cosPitch = Math.cos(pitchRad);

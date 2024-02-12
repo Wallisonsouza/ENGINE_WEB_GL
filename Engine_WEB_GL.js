@@ -1,65 +1,62 @@
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () 
+{
     const engine = new Engine_WEB_GL();
     engine.Init();
     EngineInputs.initialize();
 });
 
 
-
 class Engine_WEB_GL 
 {
-    Init()
-    {
-      
-        var gizmos = new EngineGizmos();
-        var cout = 0;
-        var speed = 0.01;
+    
+    file;
+
+    async Init()
+    {   
+        const canvas = document.getElementById("editor_render_area");
+        const file = await recoveryFile();
+
+        const gizmos = new EngineGizmos();
        
-        if(EngineInputs.GetKeyDown("d"))
-        {
-            position.x = position.x + speed;
-        }
-
-        if(EngineInputs.GetKeyDown("a"))
-        {
-            position.x = position.x - speed;
-        }
-
-        if(EngineInputs.GetKeyDown("w"))
-        {
-            position.y = position.y + speed;
-        }
-
-        if(EngineInputs.GetKeyDown("s"))
-        {
-            position.y = position.y - speed;
-        }
-
-
-        var object = new EngineObject();
-        object.AddComponent(EngineCamera);
-        object.AddComponent(EngineCamera);
-        console.log(object);
-
-
-
-
-
-
-
-
-
-     
+        var cout = 0;
+        var speed = 0.1;
+        var cameraMoveSpeed = 0.01;
+        const cameraPosition = new EngineVector3(0, 0, 2);
+        const cameraRotation = new EngineVector3(0, 0, 0);
+        
         function renderLoop() 
         {
+            if (isKeyPressed("w")) 
+            {
+                cameraPosition.z -= cameraMoveSpeed;
+            }
+            if (isKeyPressed("a")) 
+            {
+                cameraPosition.x += cameraMoveSpeed;
+            }
+            if (isKeyPressed("s")) 
+            {
+                cameraPosition.z += cameraMoveSpeed;
+            }
+            if (isKeyPressed("d")) 
+            {
+                cameraPosition.x -= cameraMoveSpeed;
+            }
 
-            var position = new EngineVector3(0.2, 0, 0);
+            if(isMouseKeyPressed(1))
+            {
+            const mouseDelta = GetMouseDelta();
+               cameraRotation.y += mouseDelta[0] * 100;
+               cameraRotation.x -= mouseDelta[1] * 100;
+            }
 
-          
-            var rotation = EngineQuaternion.EulerToQuaternion(25, cout, 0);
-            var scale = new EngineVector3(0.5, 0.5, 0.5);
-            cout = cout + 0.3;
+
+            var position = new EngineVector3(0 , 0 , 0);
+        
+            var rotation = EngineQuaternion.EulerToQuaternion(0, 0, 0);
+            var scale = new EngineVector3(1, 1, 1);
+            cout = cout + speed;
 
             const WebGL = Engine_WEB_GL_AUX.RENDERING_GET_WEB_GL_CONTEXT("editor_render_area");
             const vertexShaderSource = Engine_WEB_GL_AUX.SHADER_VERTEX_SOURCE();
@@ -67,14 +64,18 @@ class Engine_WEB_GL
             const vertexShader = Engine_WEB_GL_AUX.SHADER_CREATE_VERTEX_SHADER(WebGL, vertexShaderSource);
             const fragmentShader = Engine_WEB_GL_AUX.SHADER_CREATE_FRAGMENT_SHADER(WebGL, fragmentShaderSource);
             const program = Engine_WEB_GL_AUX.PROGRAM_CREATE(WebGL, vertexShader, fragmentShader);
-
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             WebGL.useProgram(program);
-
-            WebGL.clearColor(0.2, 0.5, 0.5, 1.0);
+            WebGL.viewport(0, 0, canvas.width, canvas.height);
+            //cria uma cor padrao de fundo
+            WebGL.clearColor(0, 0, 0, 1);
             WebGL.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
+           
 
             // cria a geometria da forma 3d
-            const geometry = EnginePrimitiveShapes3D.GetForm("cube")
+            const geometry = file[0];
             
             //cria um buffer para os vertices;
             const vertexBuffer = WebGL.createBuffer();
@@ -84,76 +85,61 @@ class Engine_WEB_GL
             // cria um buffer para os indicies dos vertices
             const indexBuffer = WebGL.createBuffer();
             WebGL.bindBuffer(WebGL.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            WebGL.bufferData(WebGL.ELEMENT_ARRAY_BUFFER, new Uint16Array(geometry.index), WebGL.STATIC_DRAW);
-
-            const a_matrix_vextex_position = WebGL.getAttribLocation(program, "a_vertexPosition");
-            WebGL.vertexAttribPointer(a_matrix_vextex_position, 3, WebGL.FLOAT, WebGL.FALSE, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
-            WebGL.enableVertexAttribArray(a_matrix_vextex_position);
-
-           // var aspecRatio = window.innerWidth /  window.innerHeight;
-            //var camSizeRight = EngineCamera.size * aspecRatio / 2.0;
-           // var camSizeLeft = -camSizeRight;
-          //  var camSizeTop = EngineCamera.size / 2;
-           // var camSizeBottom = -camSizeTop;
-
-            // cria uma matriz de projecao;
-            //var projectionMatrix = EngineMatrix4x4.Cam_Orthographic(camSizeLeft, camSizeRight, camSizeTop, camSizeBottom, EngineCamera.near, EngineCamera.far);
-            //const u_matrix_projection = WebGL.getUniformLocation(program, "u_projection");
-            //WebGL.uniformMatrix4fv(u_matrix_projection, false, EngineMatrix4x4.ToArray32(projectionMatrix));
-
-            //cria uma matriz de posicao;
-            const translationMatrix = EngineMatrix4x4.Matrix_Translation(position);
-            const u_matrix_translation = WebGL.getUniformLocation(program, "u_translation");
-            WebGL.uniformMatrix4fv(u_matrix_translation, false, EngineMatrix4x4.ToArray32(translationMatrix));
+            WebGL.bufferData(WebGL.ELEMENT_ARRAY_BUFFER, new Uint16Array(geometry.vertexIndex), WebGL.STATIC_DRAW);
+            
+            //localiza a posicao na gpu e passa os buffers 
+            const vertexPosition = WebGL.getAttribLocation(program, "aPosition");
+            WebGL.vertexAttribPointer(vertexPosition, 3, WebGL.FLOAT, false, geometry.vertex.index, 0);
+            WebGL.enableVertexAttribArray(vertexPosition);
+            
+            //cria uma matriz de translacao;
+            const geometryTranslation = EngineMatrix4x4.Matrix_Translation(position);
+            const geometryTranslationLocation = WebGL.getUniformLocation(program, "uTranslation");
+            WebGL.uniformMatrix4fv(geometryTranslationLocation, false, EngineMatrix4x4.ToArray32(geometryTranslation));
 
             // cria uma matriz de rotacao;
-            const rotationMatrix = EngineMatrix4x4.Matrix_Rotation(rotation);
-            const u_matrix_rotation = WebGL.getUniformLocation(program, "u_rotation");
-            WebGL.uniformMatrix4fv(u_matrix_rotation, false, EngineMatrix4x4.ToArray32(rotationMatrix));
+            const geometryRotation = EngineMatrix4x4.Matrix_Rotation(rotation);
+            const geometryRotationLocation = WebGL.getUniformLocation(program, "uRotation");
+            WebGL.uniformMatrix4fv(geometryRotationLocation, false, EngineMatrix4x4.ToArray32(geometryRotation));
 
             // cria uma matriz de escala;
-            var scaleMatrix = EngineMatrix4x4.Matrix_Scale(scale);
-            const u_matrix_scale = WebGL.getUniformLocation(program, "u_scale");
-            WebGL.uniformMatrix4fv(u_matrix_scale, false, EngineMatrix4x4.ToArray32(scaleMatrix));
+            var geometryScale = EngineMatrix4x4.Matrix_Scale(scale);
+            const geometryScalePosition = WebGL.getUniformLocation(program, "uScale");
+            WebGL.uniformMatrix4fv(geometryScalePosition, false, EngineMatrix4x4.ToArray32(geometryScale));
 
+            // cria uma matriz de projeção;
+            //var geometryProjection = EngineMatrix4x4.Camera_Orthographic(-1, 1, -1, 1, -10, 1000);
+            var geometryProjection = EngineMatrix4x4.Camera_Perspective(60, window.innerWidth / window.innerHeight, -1, 1000);
+            const geometryProjectionPosition = WebGL.getUniformLocation(program, "uProjection");
+            WebGL.uniformMatrix4fv(geometryProjectionPosition , false, EngineMatrix4x4.ToArray32(geometryProjection));
 
-            
-
-            //limpa o bufer apos desenhar vertices
-            //WebGL.bindBuffer(WebGL.ARRAY_BUFFER, null);
-
-
-            // Crie um único buffer para armazenar as cores e as cores de sombras
-            //const colorBuffer = WebGL.createBuffer();
-            //WebGL.bindBuffer(WebGL.ARRAY_BUFFER, colorBuffer);
-            //WebGL.bufferData(WebGL.ARRAY_BUFFER, new Float32Array(geometry.vertexColor), WebGL.STATIC_DRAW);
-
-            // Atributo para cores
-            //const colorAtribute = WebGL.getAttribLocation(program, "a_color");
-            //WebGL.vertexAttribPointer(colorAtribute, 3, WebGL.FLOAT, WebGL.FALSE, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
-           // WebGL.enableVertexAttribArray(colorAtribute);
-
-            // Atributo para cores de sombra
-            //const shadowColorAtribute = WebGL.getAttribLocation(program, "a_shadowColor");
-            //WebGL.vertexAttribPointer(shadowColorAtribute, 3, WebGL.FLOAT, WebGL.FALSE, 3 * Float32Array.BYTES_PER_ELEMENT, form3d.vertexColor.length * Float32Array.BYTES_PER_ELEMENT);
-            //WebGL.enableVertexAttribArray(shadowColorAtribute);
-                    
-
+            var geometryView = EngineMatrix4x4.identity;
+            const geometryViewPosition = WebGL.getUniformLocation(program, "uView");
+            WebGL.uniformMatrix4fv(geometryViewPosition , false, EngineMatrix4x4.ToArray32(geometryView));
 
             
-            //WebGL.enable(WebGL.CULL_FACE);
-           // WebGL.cullFace(WebGL.BACK);
+            //cria uma matriz de translacao;
+            const geometryCameraTranslation = EngineMatrix4x4.Matrix_Translation(cameraPosition);
+            const geometryCameraTranslationLocation = WebGL.getUniformLocation(program, "uCameraTranslation");
+            WebGL.uniformMatrix4fv(geometryCameraTranslationLocation, false, EngineMatrix4x4.ToArray32(geometryCameraTranslation));
 
-            WebGL.drawElements(WebGL.LINE_LOOP, geometry.index.length, WebGL.UNSIGNED_SHORT, 0);
+            // cria uma matriz de rotacao;
+            const geometryCameraRotation = EngineMatrix4x4.Matrix_Rotation(EngineQuaternion.EulerToQuaternion(cameraRotation.x, cameraRotation.y, 0));
+            const geometryCameraRotationLocation = WebGL.getUniformLocation(program, "uCameraRotation");
+            WebGL.uniformMatrix4fv(geometryCameraRotationLocation, false, EngineMatrix4x4.ToArray32(geometryCameraRotation));
+
+            WebGL.enable(WebGL.DEPTH_TEST);
+            WebGL.drawElements(WebGL.LINE_STRIP, geometry.vertexIndex.length, WebGL.UNSIGNED_SHORT, 0);
+
             gizmos.DrawnGizmos(WebGL);
-            gizmos.transform.position = position;
-            gizmos.transform.rotation = rotation;
-            gizmos.transform.scale = scale;
-
+            gizmos.transform.rotation = EngineQuaternion.EulerToQuaternion(cameraRotation.x, cameraRotation.y, 0);
+            gizmos.transform.position = new EngineVector3(0.7, -0.95, 0);
+            gizmos.transform.scale = new EngineVector3(0.5, 0.5, 0.5);
 
             requestAnimationFrame(renderLoop);
+            
         }
-
+    
         renderLoop();
     }
 }

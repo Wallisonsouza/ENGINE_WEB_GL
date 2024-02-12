@@ -130,43 +130,55 @@ class Engine_WEB_GL_AUX
     {
         return `
        
-        precision highp float;
-        attribute vec4 a_vertexPosition;
-        attribute vec4 a_color;
-        attribute vec4 a_shadowColor;
-    
+        precision mediump float;
 
-        uniform mat4 u_TRS;
-        uniform mat4  u_translation;
-        uniform mat4 u_rotation;
-        uniform mat4 u_projection;
-        uniform mat4 u_scale;
-        
-        varying vec4 v_Color;
-        varying vec4 v_shadowColor;
-    
+        attribute vec3 aPosition;
+        uniform mat4 model;
+        uniform mat4 uView;
+        uniform mat4 uTranslation;
+        uniform mat4 uRotation;
+        uniform mat4 uScale;
+        uniform mat4 uProjection;
+
+        uniform mat4 uCameraTranslation;
+        uniform mat4 uCameraRotation;
+      
+        varying vec3 normal;
+       
         void main() 
         {
-            gl_Position = u_rotation * u_scale * a_vertexPosition * u_translation;
+            //MVP model/ view/ projection
 
-            v_Color = vec4(1.0, 1.0, 1.0, 1.0);
-            v_shadowColor = a_shadowColor;
+            //T(R(S(p)))
+            mat4 arcBall = uCameraTranslation * uCameraRotation * uView;
+            mat4 model =  uTranslation * uRotation * uScale;
+            mat4 mvp = uProjection * arcBall  * model;
+            gl_Position =  mvp * vec4(aPosition, 1);
         }
         `;
     }
-
-    
     
     static SHADER_FRAGMENT_SOURCE()
     {
         return `
         precision highp float;
-        varying vec4 v_Color;
-        varying vec4 v_shadowColor;
-    
+        varying vec3 normal;
+
         void main() 
         {
-            gl_FragColor = v_Color;
+            vec3 lightDir = normalize(vec3(0.0, 0.0, 1.0)); // Direção da luz, ajuste conforme necessário
+            float difuse = max(dot(normal, lightDir), 0.2);
+            
+            // Aumentando a intensidade da luz
+            float lightIntensity = 10.0; // Valor maior para uma luz mais intensa
+            difuse *= lightIntensity;
+
+            // Aumentando a intensidade da sombra
+            float shadowIntensity = 0.1; // Valor maior para uma sombra mais intensa
+            difuse *= shadowIntensity;
+
+            vec3 difuseColor = vec3(1.0, 1.0, 1.0);
+            gl_FragColor = vec4(difuseColor * difuse, 1.0);
         }
         `;
     }

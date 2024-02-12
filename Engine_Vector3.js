@@ -11,6 +11,11 @@ class EngineVector3
         this.z = z;
     }
 
+    //static Abs(vector)
+    //{
+       // return Math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+   // }
+
     static Subtract(a, b)
     {
         return new EngineVector3(a.x - b.x, a.y - b.y, a.z - b.z);
@@ -21,9 +26,14 @@ class EngineVector3
         return new EngineVector3(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
     }
     
+    static Dot(lhs, rhs)
+    {
+        return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
+    }
+    
     static Normalize(value)
     {
-        let num = Magnitude(value);
+        let num = EngineVector3.Magnitude(value);
         let result = new EngineVector3();
     
         if (num > 1E-05)
@@ -38,8 +48,11 @@ class EngineVector3
         return new EngineVector3(0, 0, 0);
     }
     
+    
     static Magnitude(vector)
     {
         return Math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
     }
+
+  
 }

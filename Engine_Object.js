@@ -1,4 +1,5 @@
-class EngineObject {
+class EngineObject 
+{
     componentCounter = 0;
     components = {};
 

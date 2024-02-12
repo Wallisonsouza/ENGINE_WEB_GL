@@ -12,4 +12,10 @@ class EngineVector4
         this.z = z;
         this.w = w;
     }
+
+    ToArray32()
+    {
+        return new Float32Array([this.x ,this.y, this.z, this.w]);
+
+    }
 }
