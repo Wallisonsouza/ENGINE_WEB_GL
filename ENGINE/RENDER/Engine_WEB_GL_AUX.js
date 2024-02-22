@@ -1,4 +1,4 @@
-class Engine_WEB_GL_AUX
+class Engine_WebGlAux
 {
     /**
      * Obtém o contexto WebGL associado ao elemento canvas.

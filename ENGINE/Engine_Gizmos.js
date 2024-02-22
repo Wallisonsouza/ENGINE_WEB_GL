@@ -1,6 +1,8 @@
 class EngineGizmos
 {
-transform;
+ 
+
+    
   
     static colorX = new EngineVector4(1.0, 0.0, 0.0, 1.0);
     static colorY = new EngineVector4(0.0, 1.0, 0.0, 1.0);
@@ -43,9 +45,9 @@ transform;
       `;
 
 
-        const vertexShader = Engine_WEB_GL_AUX.SHADER_CREATE_VERTEX_SHADER(WebGL, vertexSource);
-        const fragmentShader = Engine_WEB_GL_AUX.SHADER_CREATE_FRAGMENT_SHADER(WebGL, fragmentSource);
-        const program = Engine_WEB_GL_AUX.PROGRAM_CREATE(WebGL, vertexShader, fragmentShader);
+        const vertexShader = Engine_WebGlAux.SHADER_CREATE_VERTEX_SHADER(WebGL, vertexSource);
+        const fragmentShader = Engine_WebGlAux.SHADER_CREATE_FRAGMENT_SHADER(WebGL, fragmentSource);
+        const program = Engine_WebGlAux.PROGRAM_CREATE(WebGL, vertexShader, fragmentShader);
     
         WebGL.useProgram(program);
     

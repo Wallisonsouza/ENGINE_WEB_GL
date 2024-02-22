@@ -1,6 +1,10 @@
-class EngineObject 
+import EngineMesh from "./RENDER/Engine_Mesh.js";
+import EngineMeshRender from "./RENDER/Engine_Mesh_Render.js";
+import EngineTransform from "./Engine_Transform.js";
+
+export default class EngineObject 
 {
-    componentCounter = 0;
+    /*componentCounter = 0;
     components = {};
 
     constructor() 
@@ -28,5 +32,12 @@ class EngineObject
     getNextComponentId() 
     {
         return Date.now().toString() + Math.random().toString(36);
+    }*/
+
+    constructor()
+    {
+        this.transform = new EngineTransform();
+        this.mesh = new EngineMesh();
+        this.meshRender = new EngineMeshRender();
     }
 }

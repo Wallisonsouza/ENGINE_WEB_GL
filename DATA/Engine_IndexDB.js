@@ -73,61 +73,7 @@ async function getAllObjectsFromPartition(db, partitionName)
     });
 }
 
-async function GetFile()
-{
-    const fileInput = document.getElementById('fileInput');
 
-    return new Promise(function(resolve, reject)
-    {
-        const file = fileInput.files[0];
-
-        if(file instanceof Blob)
-        {
-            const reader = new FileReader();
-            reader.readAsText(file);
-
-            reader.onload = function(event)
-            {
-                resolve(event.target.result);
-            }
-
-            reader.onerror = function(event) 
-            {
-                reject(`Erro ao carregar o arquivo: ${event.target.error}`);
-            };
-        }
-
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function()
-{
- 
-    const button = document.getElementById("buttonCreateObject");
-
-    button.onclick = async function()
-    {
-        try
-        {
-            const file = await GetFile();
-            const storage = await OpenStorage(storageName);
-            const object = await AddObject(storage, partitionName, ObjToArraysConverter.ObjToEngineObject(file));
-
-            GetObject(storage, partitionName);
-
-        }
-
-        catch(error)
-        {
-            console.log("Erro " + error)
-        }
-
-        finally
-        {
-            button.disabled = false;
-        }
-    }
-});
 
 async function GetObject(db, partionName)
 {

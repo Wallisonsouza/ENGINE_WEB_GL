@@ -1,4 +1,7 @@
-class EngineTransform
+
+import EngineVector3 from "./ENGINE_MATHEMATICS/Engine_Vector3.js";
+import EngineQuaternion from "./ENGINE_MATHEMATICS/Engine_Quaternion.js";
+export default class EngineTransform
 {
     position;
     rotation;

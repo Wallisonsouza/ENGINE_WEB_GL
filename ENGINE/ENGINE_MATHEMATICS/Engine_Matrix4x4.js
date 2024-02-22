@@ -1,22 +1,57 @@
-class EngineMatrix4x4
-{
-    m00;
-    m01;
-    m02;
-    m03;
-    m10;
-    m11;
-    m12;
-    m13;
-    m20;
-    m21;
-    m22;
-    m23;
-    m30;
-    m31;
-    m32;
-    m33;
 
+import EngineVector4 from "./Engine_Vector4.js";
+import EngineMatFloat from "./Engine_Mat_Float.js";
+import EngineVector3 from "./Engine_Vector3.js";
+import EngineQuaternion from "./Engine_Quaternion.js";
+
+export default class EngineMatrix4x4
+{
+    /**
+     * Cria uma nova instância de uma matriz 4x4.
+     * 
+     * @param {number} m00 - O valor na linha 0, coluna 0.
+     * @param {number} m01 - O valor na linha 0, coluna 1.
+     * @param {number} m02 - O valor na linha 0, coluna 2.
+     * @param {number} m03 - O valor na linha 0, coluna 3.
+     * @param {number} m10 - O valor na linha 1, coluna 0.
+     * @param {number} m11 - O valor na linha 1, coluna 1.
+     * @param {number} m12 - O valor na linha 1, coluna 2.
+     * @param {number} m13 - O valor na linha 1, coluna 3.
+     * @param {number} m20 - O valor na linha 2, coluna 0.
+     * @param {number} m21 - O valor na linha 2, coluna 1.
+     * @param {number} m22 - O valor na linha 2, coluna 2.
+     * @param {number} m23 - O valor na linha 2, coluna 3.
+     * @param {number} m30 - O valor na linha 3, coluna 0.
+     * @param {number} m31 - O valor na linha 3, coluna 1.
+     * @param {number} m32 - O valor na linha 3, coluna 2.
+     * @param {number} m33 - O valor na linha 3, coluna 3.
+     * @constructor
+    */
+    constructor(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)
+    {
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
+        this.m03 = m03;
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+        this.m13 = m13;
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
+        this.m23 = m23;
+        this.m30 = m30;
+        this.m31 = m31;
+        this.m32 = m32;
+        this.m33 = m33;
+    }
+
+    /**
+     * Obtém uma instância da matriz 4x4 preenchida com zeros.
+     * 
+     * @returns {EngineMatrix4x4} Uma instância da matriz 4x4 com todos os elementos definidos como zero.
+    */
     static get zero() 
     {
         const result = new EngineMatrix4x4();
@@ -37,11 +72,16 @@ class EngineMatrix4x4
         result.m31 = 0;  
         result.m32 = 0;  
         result.m33 = 0;
-    
+
         return result;
     }
 
-    static get  identity()
+    /**
+     * Obtém uma instância da matriz 4x4 que representa a matriz de identidade.
+     * 
+     * @returns {EngineMatrix4x4} Uma instância da matriz 4x4 que representa a matriz de identidade.
+    */
+    static get identity() 
     {
         const result = new EngineMatrix4x4();
 
@@ -61,13 +101,20 @@ class EngineMatrix4x4
         result.m31 = 0;  
         result.m32 = 0;  
         result.m33 = 1;
-    
+
         return result;
     }
 
-  static Matrix_Translation(vector)
+    /**
+     * Cria uma matriz de translação com base no vetor de posição fornecido.
+     * 
+     * @param {EngineVector3} vector Vetor de posição para a translação.
+     * @returns {EngineMatrix4x4} Uma matriz de translação 4x4.
+    */
+    static GeometryTranslation(vector)
     {
         const result = new EngineMatrix4x4();
+
         result.m00 = 1;
         result.m01 = 0;
         result.m02 = 0;
@@ -88,32 +135,15 @@ class EngineMatrix4x4
         return result;
     }
 
-    /* static Matrix_Translation(vector)
+    /**
+     * Cria uma matriz de rotação com base no quaternion de rotação fornecido.
+     * 
+     * @param {EngineQuaternion} quaternion O quaternion de rotação.
+     * @returns {EngineMatrix4x4} Uma matriz de rotação 4x4.
+    */
+    static GeometryRotationQuaternion(quaternion) 
     {
-        const result = new EngineMatrix4x4();
-        result.m00 = 1;
-        result.m01 = 0;
-        result.m02 = 0;
-        result.m03 = vector.x;
-        result.m10 = 0;
-        result.m11 = 1;
-        result.m12 = 0;
-        result.m13 = vector.y;
-        result.m20 = 0;
-        result.m21 = 0;
-        result.m22 = 1;
-        result.m23 =  vector.z;
-        result.m30 = 0;
-        result.m31 = 0;
-        result.m32 = 0;
-        result.m33 = 1;
 
-        return result;
-    }*/
-
-
-    static Matrix_Rotation(quaternion) 
-    {
         const num00 = quaternion.x * 2;
         const num01 = quaternion.y * 2;
         const num03 = quaternion.z * 2;
@@ -147,9 +177,151 @@ class EngineMatrix4x4
         result.m33 = 1;
        
         return result;
+
     }
 
-    static Matrix_Scale(vector)
+    /**
+     * Retorna uma matriz de rotação de roll (em torno do eixo X) usando o ângulo de roll fornecido.
+     * 
+     * @param {number} roll O ângulo de roll em radianos.
+     * @returns {EngineMatrix4x4} Uma matriz 4x4 de rotação de roll.
+    */
+    static GeometryRotationRoll(roll)
+    {
+        const sinTheta = Math.sin(roll);
+        const cosTheta = Math.cos(roll);
+
+        const result = new EngineMatrix4x4();
+        
+        result.m00 = 1;  
+        result.m01 = 0;  
+        result.m02 = 0;  
+        result.m03 = 0;
+        result.m10 = 0;  
+        result.m11 = cosTheta;  
+        result.m12 = -sinTheta;  
+        result.m13 = 0;
+        result.m20 = 0;  
+        result.m21 = sinTheta;  
+        result.m22 = cosTheta;  
+        result.m23 = 0;
+        result.m30 = 0;  
+        result.m31 = 0;  
+        result.m32 = 0;  
+        result.m33 = 1;
+
+        return result;
+    }
+
+    /**
+     * Retorna uma matriz de rotação de pitch (em torno do eixo Y) usando o ângulo de pitch fornecido.
+     * 
+     * @param {number} pitch O ângulo de pitch em radianos.
+     * @returns {EngineMatrix4x4} Uma matriz 4x4 de rotação de pitch.
+    */
+    static GeometryRotationPitch(pitch)
+    {
+        const sinTheta = Math.sin(pitch);
+        const cosTheta = Math.cos(pitch);
+
+        const result = new EngineMatrix4x4();
+        
+        result.m00 = cosTheta;  
+        result.m01 = 0;  
+        result.m02 = sinTheta;  
+        result.m03 = 0;
+        result.m10 = 0;  
+        result.m11 = 1;  
+        result.m12 = 0;  
+        result.m13 = 0;
+        result.m20 = -sinTheta;  
+        result.m21 = 0;  
+        result.m22 = cosTheta;  
+        result.m23 = 0;
+        result.m30 = 0;  
+        result.m31 = 0;  
+        result.m32 = 0;  
+        result.m33 = 1;
+
+        return result;
+    }
+    
+    /**
+     * Retorna uma matriz de rotação de yaw (em torno do eixo Z) usando o ângulo de yaw fornecido.
+     * 
+     * @param {number} yaw O ângulo de yaw em radianos.
+     * @returns {EngineMatrix4x4} Uma matriz 4x4 de rotação de yaw.
+    */
+    static GeometryRotationYaw(yaw)
+    {
+        const sinTheta = Math.sin(yaw);
+        const cosTheta = Math.cos(yaw);
+
+        const result = new EngineMatrix4x4();
+
+        result.m00 = cosTheta;  
+        result.m01 = -sinTheta;  
+        result.m02 = 0;  
+        result.m03 = 0;
+        result.m10 = sinTheta;  
+        result.m11 = cosTheta;  
+        result.m12 = 0;  
+        result.m13 = 0;
+        result.m20 = 0;  
+        result.m21 = 0;  
+        result.m22 = 1;  
+        result.m23 = 0;
+        result.m30 = 0;  
+        result.m31 = 0;  
+        result.m32 = 0;  
+        result.m33 = 1;
+
+        return result;
+    }
+
+    /**
+     * Calcula uma matriz de rotação com base em ângulos de Euler (roll, pitch, yaw).
+     * @param {EngineVector3} vector Um vetor contendo os ângulos de Euler (roll, pitch, yaw) em radianos.
+     * @returns {EngineMatrix4x4} A matriz de rotação resultante.
+    */
+    static GeometryRotationEuler(vector)
+    {
+        const cosRoll = Math.cos(vector.x);
+        const sinRoll = Math.sin(vector.x);
+        const cosPitch = Math.cos(vector.y);
+        const sinPitch = Math.sin(vector.y);
+        const cosYaw = Math.cos(vector.z);
+        const sinYaw = Math.sin(vector.z);
+
+        const result = new EngineMatrix4x4();
+
+        result.m00 = cosYaw * cosPitch;
+        result.m01 = cosYaw * sinPitch * sinRoll - sinYaw * cosRoll;
+        result.m02 = cosYaw * sinPitch * cosRoll + sinYaw * sinRoll;
+        result.m03 = 0;
+        result.m10 = sinYaw * cosPitch; 
+        result.m11 = sinYaw * sinPitch * sinRoll + cosYaw * cosRoll;
+        result.m12 = sinYaw * sinPitch * cosRoll - cosYaw * sinRoll;  
+        result.m13 = 0;
+        result.m20 = -sinPitch;  
+        result.m21 = cosPitch * sinRoll;  
+        result.m22 = cosPitch * cosRoll;  
+        result.m23 = 0;
+        result.m30 = 0;  
+        result.m31 = 0;  
+        result.m32 = 0;  
+        result.m33 = 1;
+
+        return result;
+    }
+
+    /**
+     * Cria uma matriz de escala com base no vetor de escala fornecido.
+     * 
+     * @param {EngineVector3} vector O vetor de escala.
+     * @returns {EngineMatrix4x4} Uma matriz de escala 4x4.
+    */
+    static GeometryScale(vector)
     {
         const result = new EngineMatrix4x4();
 
@@ -172,47 +344,37 @@ class EngineMatrix4x4
 
         return result;
     }
-   
-    static Matrix_TRS(position, rotation, scale)
-    {
-        const T = EngineMatrix4x4.Matrix_Translation(position);
-        const R = EngineMatrix4x4.Matrix_Rotation(rotation);
-        const S = EngineMatrix4x4.Matrix_Scale(scale);
 
-        const SR =  EngineMatrix4x4.Multiply(S, R);
-        const SRT = EngineMatrix4x4.Multiply(SR, T);
-
-        return SRT;
-    }
-
-    static Matrix_MVP(model, view, projection)
-    {
-        //mvp
-
-        const PV = EngineMatrix4x4.Multiply(model, EngineMatrix4x4.identityMatrix);
-        const MVP = EngineMatrix4x4.Multiply(PV, projection);
-        return MVP
-    }
-
-    static Camera_Orthographic(left, right, bottom, top, zNear, zFar) 
+    /**
+     * Cria uma matriz de projeção ortográfica para uma câmera.
+     * 
+     * @param {number} left Coordenada esquerda da viewport.
+     * @param {number} right Coordenada direita da viewport.
+     * @param {number} bottom Coordenada inferior da viewport.
+     * @param {number} top Coordenada superior da viewport.
+     * @param {number} zNear Distância para o plano de recorte próximo.
+     * @param {number} zFar Distância para o plano de recorte distante.
+     * @returns {EngineMatrix4x4} Uma matriz de projeção ortográfica 4x4.
+    */
+    static CameraOrthographic(left, right, bottom, top, zNear, zFar) 
     {
         const result = new EngineMatrix4x4();
 
+        // Calcula os componentes da matriz de projeção ortográfica
         result.m00 = 2.0 / (right - left);
-        result.m01 = 0;  
-        result.m02 = 0;  
-        result.m03 = 0;
         result.m11 = 2.0 / (top - bottom);
         result.m22 = -2.0 / (zFar - zNear);
-        result.m30 = -(right + left) /  (right - left);
+        result.m30 = -(right + left) / (right - left);
         result.m31 = -(top + bottom) / (top - bottom);
-        result.m32 = -(zFar + zNear) / (zFar -zNear);
+        result.m32 = -(zFar + zNear) / (zFar - zNear);
 
-        result.m13 = 0;
+        // Zera os outros elementos da matriz que não foram definidos acima
         result.m01 = 0;
         result.m02 = 0;
+        result.m03 = 0;
         result.m10 = 0;
         result.m12 = 0;
+        result.m13 = 0;
         result.m20 = 0;
         result.m21 = 0;
         result.m23 = 0;
@@ -221,49 +383,21 @@ class EngineMatrix4x4
         return result;
     }
 
-    /*static Camera_Orthographic(left, right, bottom, top, zNear, zFar) 
-    {
-        const result = new EngineMatrix4x4();
-
-        const lr = 1 / (left - right);
-        const bt = 1 / (bottom - top);
-        const nf = 1 / (zNear - zFar);
-      
-        result.m00 = -2 * lr;  
-        result.m01 = 0;  
-        result.m02 = 0;  
-        result.m03 = 0;
-        result.m10 = 0;  
-        result.m11 = -2 * bt;  
-        result.m12 = 0;  
-        result.m13 = 0;
-        result.m20 = 0;  
-        result.m21 = 0;  
-        result.m22 = 2 * nf;  
-        result.m23 = 0;
-        result.m30 = (left + right) * lr;  
-        result.m31 = (top + bottom) * bt;  
-        result.m32 = (zFar + zNear) * nf;  
-        result.m33 = 1;
-
-        return result;
-    }*/
-
     /**
-    * Gera uma matriz de perspectiva, com os dados forecidos;
-    * @param {number} newFov Campo de visão em graus;
-    * @param {number} aspect Relação entre largura e autura da tela;
-    * @param {number} zNear Plano frontal, mais próximo da camera;
-    * @param {number} zFar Plano traseiro, mais distante da camera;
-    * @returns {EngineMatrix4x4} matriz gerada apos os calculos;
+     * Cria uma matriz de projeção perspectiva para uma câmera.
+     * 
+     * @param {number} fov Campo de visão (em graus).
+     * @param {number} aspect Razão de aspecto da viewport.
+     * @param {number} zNear Distância para o plano de recorte próximo.
+     * @param {number} zFar Distância para o plano de recorte distante.
+     * @returns {EngineMatrix4x4} Uma matriz de projeção perspectiva 4x4.
     */
-    static Camera_Perspective(fov, aspect, zNear, zFar)
+    static CameraPerspective(fov, aspect, zNear, zFar)
     {
         const result = new EngineMatrix4x4();
+
         const newFov = EngineMatFloat.DregreesToRadians(fov);
         const tanHalfFov = Math.tan(newFov / 2);
-
-       
 
         result.m00 = 1 / (aspect * tanHalfFov);
         result.m01 = 0;
@@ -288,33 +422,41 @@ class EngineMatrix4x4
         return result;
     }
 
-    static Camera_View(eye, up, right, foward)
+    static CameraView(eye, forward, upWards)
     {   
-        const result =  new EngineMatrix4x4();
+
+        const fwd = EngineVector3.Normalize(forward);
+        const right = EngineVector3.Cross(upWards, fwd);
+        const up =  EngineVector3.Cross(fwd, right);
+
+        const result = new EngineMatrix4x4()
 
         result.m00 = right.x;
-        result.m01 = up.x;
-        result.m02 = -foward.x;
+        result.m01 = right.y;
+        result.m02 = right.z;
         result.m03 = 0;
-        result.m10 = right.y;
+        result.m10 = up.x;
         result.m11 = up.y;
-        result.m12 = -foward.y;
+        result.m12 = up.z;
         result.m13 = 0;
-        result.m20 = right.z;
-        result.m21 = up.z;
-        result.m22 = -foward.z;
+        result.m20 = -fwd.x;
+        result.m21 = -fwd.y;
+        result.m22 = -fwd.z;
         result.m23 = 0;
         result.m30 = -EngineVector3.Dot(right, eye);
         result.m31 = -EngineVector3.Dot(up, eye);
-        result.m32 = EngineVector3.Dot(foward, eye);;
+        result.m32 = EngineVector3.Dot(fwd, eye);
         result.m33 = 1;
 
        return result;
+
     }
 
-    static Camera_Translation(vector)
+    static CameraTranslation(vector)
     {   
+
        const result = new EngineMatrix4x4();
+
         result.m00 = 1;
         result.m01 = 0;
         result.m02 = 0;
@@ -333,10 +475,12 @@ class EngineMatrix4x4
         result.m33 = 1;
 
         return result;
+
     }
 
-    static Camera_Rotation(quaternion) 
+    static CameraRotation(quaternion) 
     {
+
         const num00 = quaternion.x * 2;
         const num01 = quaternion.y * 2;
         const num03 = quaternion.z * 2;
@@ -370,6 +514,7 @@ class EngineMatrix4x4
         result.m33 = 1;
        
         return result;
+
     }
     
     /**
@@ -379,8 +524,9 @@ class EngineMatrix4x4
     * @param {EngineVector3} up  Direcao para cima no espaço 3d.
     * @returns {EngineMatrix4x4} Uma matriz 4x4 lookat
     */
-    static Camera_LookAt(eye, center, up)
+    static CameraLookAt(eye, center, up)
     {
+        
         const result = new EngineMatrix4x4();
 
         const zAxis = EngineVector3.Subtract(eye, center);
@@ -441,10 +587,14 @@ class EngineMatrix4x4
     }
 
     /**
+    * @description 
     * Multiplica uma EngineMatrix4x4 por um EngineVector4;
+    * 
     * @param {EngineMatrix4x4} lhs Multiplicando EngineMatrix4x4;
     * @param {EngineVector4} vector Multiplicador EngineVector4;
     * @returns {EngineVector4} Vetor resultante;
+    * @see EngineVector4
+    * 
     */
     static MultiplyVector4(lhs, vector)
     {
@@ -532,5 +682,84 @@ class EngineMatrix4x4
         }
 
     //#endregion
-   
+        
+    //#region OBSOLETS
+
+        /* static Matrix_Translation(vector)
+        {
+            const result = new EngineMatrix4x4();
+            result.m00 = 1;
+            result.m01 = 0;
+            result.m02 = 0;
+            result.m03 = vector.x;
+            result.m10 = 0;
+            result.m11 = 1;
+            result.m12 = 0;
+            result.m13 = vector.y;
+            result.m20 = 0;
+            result.m21 = 0;
+            result.m22 = 1;
+            result.m23 =  vector.z;
+            result.m30 = 0;
+            result.m31 = 0;
+            result.m32 = 0;
+            result.m33 = 1;
+
+            return result;
+        }*/
+
+
+        /*static Camera_View(eye, up, right, foward)w
+        {   
+            const result =  new EngineMatrix4x4();
+
+            result.m00 = right.x;
+            result.m01 = up.x;
+            result.m02 = -foward.x;
+            result.m03 = 0;
+            result.m10 = right.y;
+            result.m11 = up.y;
+            result.m12 = -foward.y;
+            result.m13 = 0;
+            result.m20 = right.z;
+            result.m21 = up.z;
+            result.m22 = -foward.z;
+            result.m23 = 0;
+            result.m30 = -EngineVector3.Dot(right, eye);
+            result.m31 = -EngineVector3.Dot(up, eye);
+            result.m32 = -EngineVector3.Dot(foward, eye);
+            result.m33 = 1;
+
+        return result;
+        }*/
+
+        /*static Camera_Orthographic(left, right, bottom, top, zNear, zFar) 
+        {
+            const result = new EngineMatrix4x4();
+
+            const lr = 1 / (left - right);
+            const bt = 1 / (bottom - top);
+            const nf = 1 / (zNear - zFar);
+        
+            result.m00 = -2 * lr;  
+            result.m01 = 0;  
+            result.m02 = 0;  
+            result.m03 = 0;
+            result.m10 = 0;  
+            result.m11 = -2 * bt;  
+            result.m12 = 0;  
+            result.m13 = 0;
+            result.m20 = 0;  
+            result.m21 = 0;  
+            result.m22 = 2 * nf;  
+            result.m23 = 0;
+            result.m30 = (left + right) * lr;  
+            result.m31 = (top + bottom) * bt;  
+            result.m32 = (zFar + zNear) * nf;  
+            result.m33 = 1;
+
+            return result;
+        }*/
+
+    //#endregion
 }

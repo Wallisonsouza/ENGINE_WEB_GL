@@ -1,4 +1,7 @@
-class EngineQuaternion
+
+import EngineMatFloat from "./Engine_Mat_Float.js";
+import EngineVector3 from "./Engine_Vector3.js";
+export default class EngineQuaternion
 {
     x;
     y;
@@ -7,7 +10,7 @@ class EngineQuaternion
 
     identity ;
 
-    constructor(x, y, z, w)
+    constructor(x = 0, y =0, z = 0, w= 1)
     {
         this.x = x;
         this.y = y;
@@ -15,6 +18,12 @@ class EngineQuaternion
         this.w = w;
     }
 
+    /**
+     * @param {number} roll Eixo x
+     * @param {number} pitch Eixo y
+     * @param {number} yaw Eixo z
+     * @returns 
+    */
     static EulerToQuaternion(roll, pitch, yaw) 
     {
         const pitchRad = EngineMatFloat.DregreesToRadians(pitch) / 2; 
@@ -35,6 +44,33 @@ class EngineQuaternion
     
         const result = new EngineQuaternion(x, y, z, w);
         return  EngineQuaternion.Normalize(result);
+    }
+
+    /**
+     * @param {EngineVector3} vector 
+     * @returns 
+    */
+    static EulerToQuaternionVector(vector)
+    {   
+        const pitchRad = EngineMatFloat.DregreesToRadians(vector.y) / 2; 
+        const yawRad = EngineMatFloat.DregreesToRadians(vector.z) / 2; 
+        const rollRad = EngineMatFloat.DregreesToRadians(vector.x) / 2; 
+    
+        const sinPitch = Math.sin(pitchRad);
+        const cosPitch = Math.cos(pitchRad);
+        const sinYaw = Math.sin(yawRad);
+        const cosYaw = Math.cos(yawRad);
+        const sinRoll = Math.sin(rollRad);
+        const cosRoll = Math.cos(rollRad);
+    
+        const x = sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw;
+        const y = cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw;
+        const z = cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw;
+        const w = cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw;
+    
+        const result = new EngineQuaternion(x, y, z, w);
+        return  EngineQuaternion.Normalize(result);
+
     }
    
     static Multiply(lhs, rhs)
@@ -100,7 +136,5 @@ class EngineQuaternion
     {
         return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
- 
-
     
 }

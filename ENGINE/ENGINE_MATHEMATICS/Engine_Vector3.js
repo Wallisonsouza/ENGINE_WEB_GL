@@ -1,4 +1,4 @@
-class EngineVector3
+export default class EngineVector3
 {
     x;
     y;

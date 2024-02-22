@@ -1,4 +1,4 @@
-class ObjToArraysConverter 
+class EngineObjectConverter
 {
     static ObjToEngineObject(obj) 
     {
@@ -18,7 +18,8 @@ class ObjToArraysConverter
         lines.forEach(line => {
             const parts = line.trim().split(/\s+/);
 
-            switch(parts[0]) {
+            switch(parts[0]) 
+            {
                 case 'v':
                     const vertex = parts.slice(1).map(parseFloat);
                     dataArray.vertex.push(...vertex);
